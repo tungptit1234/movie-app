@@ -76,12 +76,14 @@ function App() {
       }
     })();
   }, []);
-
+  const handleClearSearch = () => {
+    setSearchData([]);
+  };
   return (
     <>
       <MovieProvider>
         <div className="h-full bg-black text-white min-h-screen pb-10 relative">
-          <Header onSearch={handleSearch} />
+          <Header onSearch={handleSearch} onClearSearch={handleClearSearch} />
           <Banner />
           {searchData.length === 0 && (
             <MovieList title="Phim Hot" data={trendingMovies.slice(0, 10)} />
