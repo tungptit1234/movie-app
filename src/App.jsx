@@ -21,11 +21,28 @@ function App() {
         Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
       },
     };
+    
     if (value === "") return setSearchData([]);
+    
     try {
       const response = await fetch(url, options);
       const data = await response.json();
-      setSearchData(data.results);
+      
+      // Bước lọc kết quả: Ép kiểu về chữ thường nhưng VẪN giữ nguyên dấu
+      const searchTermLower = value.toLowerCase();
+      
+      const exactMatches = data.results.filter((movie) => {
+        // Phòng trường hợp movie.title bị undefined
+        const titleLower = movie.title ? movie.title.toLowerCase() : "";
+        const originalTitleLower = movie.original_title ? movie.original_title.toLowerCase() : "";
+        
+        // Trả về true nếu title hoặc original_title chứa chính xác từ khóa có dấu
+        return titleLower.includes(searchTermLower) || originalTitleLower.includes(searchTermLower);
+      });
+
+      // Cập nhật state bằng danh sách phim đã được lọc chính xác
+      setSearchData(exactMatches);
+      
     } catch (error) {
       console.log(error);
     }
